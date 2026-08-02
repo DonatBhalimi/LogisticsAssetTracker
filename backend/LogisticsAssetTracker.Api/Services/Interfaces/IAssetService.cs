@@ -8,6 +8,8 @@ public interface IAssetService
 {
     Task<PagedResult<AssetResponse>> ListAsync(AssetListQuery query, UserRole requesterRole);
     Task<AssetResponse> GetByIdAsync(Guid id, UserRole requesterRole);
+    Task<AssetResponse> GetByCodeAsync(string assetCode, UserRole requesterRole);
+    Task<AssetResponse> GetByQrAsync(string qrCodeValue, UserRole requesterRole);
     Task<AssetResponse> CreateAsync(CreateAssetRequest request, Guid actingUserId);
     Task<AssetResponse> UpdateAsync(Guid id, UpdateAssetRequest request, Guid actingUserId);
     Task DeactivateAsync(Guid id, Guid actingUserId);

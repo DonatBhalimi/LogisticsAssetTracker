@@ -10,4 +10,6 @@ public static class AuditActions
     public const string AssetCreated = "AssetCreated";
     public const string AssetUpdated = "AssetUpdated";
     public const string AssetDeactivated = "AssetDeactivated";
+    public const string MovementCreated = "MovementCreated";
+    public const string MovementBlocked = "MovementBlocked";
 }

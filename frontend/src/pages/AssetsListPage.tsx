@@ -94,7 +94,10 @@ export function AssetsListPage() {
                 </td>
                 <td>{new Date(asset.updatedAt).toLocaleString()}</td>
                 <td>
-                  <Link to={`/assets/${asset.id}`}>View</Link>
+                  <Link to={`/assets/${asset.id}`}>View</Link>{" "}
+                  {asset.isActive && asset.status !== "Retired" && (
+                    <Link to={`/assets/${asset.id}/movement`}>Update Movement</Link>
+                  )}
                 </td>
               </tr>
             ))}

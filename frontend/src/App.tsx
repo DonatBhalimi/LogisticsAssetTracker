@@ -8,6 +8,9 @@ import { AssetsListPage } from "./pages/AssetsListPage";
 import { AssetDetailsPage } from "./pages/AssetDetailsPage";
 import { CreateAssetPage } from "./pages/CreateAssetPage";
 import { EditAssetPage } from "./pages/EditAssetPage";
+import { ManualMovementPage } from "./pages/ManualMovementPage";
+import { QrMovementPage } from "./pages/QrMovementPage";
+import { QrScannerPage } from "./pages/QrScannerPage";
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
           <Route path="/" element={<Navigate to="/assets" replace />} />
           <Route path="/assets" element={<AssetsListPage />} />
           <Route path="/assets/:id" element={<AssetDetailsPage />} />
+          <Route path="/assets/:id/movement" element={<ManualMovementPage />} />
+          <Route path="/assets/qr/:qrCodeValue/movement" element={<QrMovementPage />} />
+          <Route path="/scan" element={<QrScannerPage />} />
 
           <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
             <Route path="/assets/new" element={<CreateAssetPage />} />

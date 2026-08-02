@@ -1,9 +1,9 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
 
-// Navigation is role-based per Document 07. Only Phase 2 destinations are wired up;
-// later phases (Approvals, Suspicious Activity, Risk Recommendations, Audit Logs,
-// Dashboard, QR Scanner) are added when those features are implemented.
+// Navigation is role-based per Document 07. Later phases (Approvals, Suspicious
+// Activity, Risk Recommendations, Audit Logs, Dashboard) are added when those
+// features are implemented.
 export function AppLayout() {
   const { user, logout } = useAuth();
 
@@ -15,6 +15,11 @@ export function AppLayout() {
 
   if (user.role === "Admin") {
     links.push({ to: "/locations", label: "Locations" }, { to: "/users", label: "Users" });
+  }
+
+  // Document 07 navigation lists "QR Scanner" under Operator only.
+  if (user.role === "Operator") {
+    links.push({ to: "/scan", label: "QR Scanner" });
   }
 
   return (

@@ -124,6 +124,40 @@ public class AssetService : IAssetService
         return MapToResponse(asset);
     }
 
+    public async Task<AssetResponse> GetByCodeAsync(string assetCode, UserRole requesterRole)
+    {
+        // Manual asset-code fallback (Document 06): lookup is case-insensitive.
+        var normalized = assetCode.Trim().ToUpperInvariant();
+
+        var asset = await _db.Assets
+            .Include(a => a.CurrentLocation)
+            .Include(a => a.AssignedToUser)
+            .FirstOrDefaultAsync(a => a.NormalizedAssetCode == normalized);
+
+        if (asset is null || (requesterRole == UserRole.Operator && !asset.IsActive))
+        {
+            throw ApiException.NotFound("ASSET_NOT_FOUND", "Asset not found.");
+        }
+
+        return MapToResponse(asset);
+    }
+
+    public async Task<AssetResponse> GetByQrAsync(string qrCodeValue, UserRole requesterRole)
+    {
+        // QR movement context lookup (Document 06): invalid token returns 404.
+        var asset = await _db.Assets
+            .Include(a => a.CurrentLocation)
+            .Include(a => a.AssignedToUser)
+            .FirstOrDefaultAsync(a => a.QrCodeValue == qrCodeValue);
+
+        if (asset is null || (requesterRole == UserRole.Operator && !asset.IsActive))
+        {
+            throw ApiException.NotFound("ASSET_NOT_FOUND", "Asset not found.");
+        }
+
+        return MapToResponse(asset);
+    }
+
     public async Task<AssetResponse> CreateAsync(CreateAssetRequest request, Guid actingUserId)
     {
         // Document 06 asset-creation rules.
@@ -269,7 +303,7 @@ public class AssetService : IAssetService
         throw new InvalidOperationException("Unable to generate a unique asset code after multiple attempts.");
     }
 
-    private static AssetResponse MapToResponse(Asset asset) => new()
+    internal static AssetResponse MapToResponse(Asset asset) => new()
     {
         Id = asset.Id,
         AssetCode = asset.AssetCode,

@@ -2,6 +2,7 @@ using System.Security.Claims;
 using FluentValidation;
 using LogisticsAssetTracker.Api.Domain.Enums;
 using LogisticsAssetTracker.Api.Dtos.Assets;
+using LogisticsAssetTracker.Api.Dtos.Movements;
 using LogisticsAssetTracker.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,17 +15,23 @@ namespace LogisticsAssetTracker.Api.Controllers;
 public class AssetsController : ControllerBase
 {
     private readonly IAssetService _assetService;
+    private readonly IAssetMovementService _movementService;
     private readonly IValidator<CreateAssetRequest> _createValidator;
     private readonly IValidator<UpdateAssetRequest> _updateValidator;
+    private readonly IValidator<MovementRequest> _movementValidator;
 
     public AssetsController(
         IAssetService assetService,
+        IAssetMovementService movementService,
         IValidator<CreateAssetRequest> createValidator,
-        IValidator<UpdateAssetRequest> updateValidator)
+        IValidator<UpdateAssetRequest> updateValidator,
+        IValidator<MovementRequest> movementValidator)
     {
         _assetService = assetService;
+        _movementService = movementService;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _movementValidator = movementValidator;
     }
 
     [HttpGet]
@@ -38,6 +45,20 @@ public class AssetsController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _assetService.GetByIdAsync(id, CurrentUserRole());
+        return Ok(result);
+    }
+
+    [HttpGet("by-code/{assetCode}")]
+    public async Task<IActionResult> GetByCode(string assetCode)
+    {
+        var result = await _assetService.GetByCodeAsync(assetCode, CurrentUserRole());
+        return Ok(result);
+    }
+
+    [HttpGet("qr/{qrCodeValue}")]
+    public async Task<IActionResult> GetByQr(string qrCodeValue)
+    {
+        var result = await _assetService.GetByQrAsync(qrCodeValue, CurrentUserRole());
         return Ok(result);
     }
 
@@ -73,6 +94,29 @@ public class AssetsController : ControllerBase
     {
         var result = await _assetService.GetQrAsync(id);
         return Ok(result);
+    }
+
+    [HttpGet("{id:guid}/movements")]
+    public async Task<IActionResult> GetMovements(Guid id, [FromQuery] AssetMovementListQuery query)
+    {
+        var result = await _movementService.GetHistoryAsync(id, query, CurrentUserRole());
+        return Ok(result);
+    }
+
+    [HttpPost("{id:guid}/movements/manual")]
+    public async Task<IActionResult> CreateManualMovement(Guid id, [FromBody] MovementRequest request)
+    {
+        await _movementValidator.ValidateAndThrowAsync(request);
+        var result = await _movementService.CreateManualMovementAsync(id, request, CurrentUserId(), CurrentUserRole());
+        return StatusCode(StatusCodes.Status201Created, result);
+    }
+
+    [HttpPost("qr/{qrCodeValue}/movements")]
+    public async Task<IActionResult> CreateQrMovement(string qrCodeValue, [FromBody] MovementRequest request)
+    {
+        await _movementValidator.ValidateAndThrowAsync(request);
+        var result = await _movementService.CreateQrMovementAsync(qrCodeValue, request, CurrentUserId(), CurrentUserRole());
+        return StatusCode(StatusCodes.Status201Created, result);
     }
 
     private Guid CurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

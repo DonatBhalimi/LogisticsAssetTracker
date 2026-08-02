@@ -18,6 +18,16 @@ export async function getAsset(id: string): Promise<Asset> {
   return response.data;
 }
 
+export async function getAssetByCode(assetCode: string): Promise<Asset> {
+  const response = await apiClient.get<Asset>(`/assets/by-code/${encodeURIComponent(assetCode)}`);
+  return response.data;
+}
+
+export async function getAssetByQr(qrCodeValue: string): Promise<Asset> {
+  const response = await apiClient.get<Asset>(`/assets/qr/${encodeURIComponent(qrCodeValue)}`);
+  return response.data;
+}
+
 export async function createAsset(request: CreateAssetRequest): Promise<Asset> {
   const response = await apiClient.post<Asset>("/assets", request);
   return response.data;

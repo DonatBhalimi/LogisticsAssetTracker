@@ -11,6 +11,9 @@ import { EditAssetPage } from "./pages/EditAssetPage";
 import { ManualMovementPage } from "./pages/ManualMovementPage";
 import { QrMovementPage } from "./pages/QrMovementPage";
 import { QrScannerPage } from "./pages/QrScannerPage";
+import { ApprovalsPage } from "./pages/ApprovalsPage";
+import { AuditLogsPage } from "./pages/AuditLogsPage";
+import { SuspiciousActivityPage } from "./pages/SuspiciousActivityPage";
 
 function App() {
   return (
@@ -31,6 +34,12 @@ function App() {
             <Route path="/assets/:id/edit" element={<EditAssetPage />} />
             <Route path="/users" element={<UsersPage />} />
             <Route path="/locations" element={<LocationsPage />} />
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={["Admin", "Manager"]} />}>
+            <Route path="/approvals" element={<ApprovalsPage />} />
+            <Route path="/suspicious-activity" element={<SuspiciousActivityPage />} />
+            <Route path="/audit-logs" element={<AuditLogsPage />} />
           </Route>
         </Route>
       </Route>

@@ -19,19 +19,22 @@ public class AssetsController : ControllerBase
     private readonly IValidator<CreateAssetRequest> _createValidator;
     private readonly IValidator<UpdateAssetRequest> _updateValidator;
     private readonly IValidator<MovementRequest> _movementValidator;
+    private readonly IValidator<ReactivateAssetRequest> _reactivateValidator;
 
     public AssetsController(
         IAssetService assetService,
         IAssetMovementService movementService,
         IValidator<CreateAssetRequest> createValidator,
         IValidator<UpdateAssetRequest> updateValidator,
-        IValidator<MovementRequest> movementValidator)
+        IValidator<MovementRequest> movementValidator,
+        IValidator<ReactivateAssetRequest> reactivateValidator)
     {
         _assetService = assetService;
         _movementService = movementService;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
         _movementValidator = movementValidator;
+        _reactivateValidator = reactivateValidator;
     }
 
     [HttpGet]
@@ -108,7 +111,7 @@ public class AssetsController : ControllerBase
     {
         await _movementValidator.ValidateAndThrowAsync(request);
         var result = await _movementService.CreateManualMovementAsync(id, request, CurrentUserId(), CurrentUserRole());
-        return StatusCode(StatusCodes.Status201Created, result);
+        return MovementResultResponse(result);
     }
 
     [HttpPost("qr/{qrCodeValue}/movements")]
@@ -116,8 +119,23 @@ public class AssetsController : ControllerBase
     {
         await _movementValidator.ValidateAndThrowAsync(request);
         var result = await _movementService.CreateQrMovementAsync(qrCodeValue, request, CurrentUserId(), CurrentUserRole());
+        return MovementResultResponse(result);
+    }
+
+    [HttpPost("{id:guid}/reactivate")]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> Reactivate(Guid id, [FromBody] ReactivateAssetRequest request)
+    {
+        await _reactivateValidator.ValidateAndThrowAsync(request);
+        var result = await _movementService.ReactivateAsync(id, request, CurrentUserId(), CurrentUserRole());
         return StatusCode(StatusCodes.Status201Created, result);
     }
+
+    // Document 06 movement outcomes: 201 for a completed movement, 202 when an approval was created instead.
+    private IActionResult MovementResultResponse(MovementResult result) =>
+        result.ResultType == "ApprovalRequired"
+            ? StatusCode(StatusCodes.Status202Accepted, result)
+            : StatusCode(StatusCodes.Status201Created, result);
 
     private Guid CurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 

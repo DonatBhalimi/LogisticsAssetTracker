@@ -1,3 +1,6 @@
+using LogisticsAssetTracker.Api.Common;
+using LogisticsAssetTracker.Api.Dtos.AuditLogs;
+
 namespace LogisticsAssetTracker.Api.Services.Interfaces;
 
 public interface IAuditLogService
@@ -10,4 +13,6 @@ public interface IAuditLogService
         object? metadata = null,
         bool isSuspicious = false,
         string? suspiciousReason = null);
+
+    Task<PagedResult<AuditLogResponse>> QueryAsync(AuditLogListQuery query);
 }

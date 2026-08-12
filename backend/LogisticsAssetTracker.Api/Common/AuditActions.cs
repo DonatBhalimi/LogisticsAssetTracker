@@ -12,4 +12,11 @@ public static class AuditActions
     public const string AssetDeactivated = "AssetDeactivated";
     public const string MovementCreated = "MovementCreated";
     public const string MovementBlocked = "MovementBlocked";
+    public const string MovementApprovalRequested = "MovementApprovalRequested";
+    public const string MovementApprovalDuplicateRejected = "MovementApprovalDuplicateRejected";
+    public const string MovementApprovalApproved = "MovementApprovalApproved";
+    public const string MovementApprovalRejected = "MovementApprovalRejected";
+    public const string AssetLostReactivated = "AssetLostReactivated";
+    public const string AssetLostToRetired = "AssetLostToRetired";
+    public const string AssetConditionCleared = "AssetConditionCleared";
 }

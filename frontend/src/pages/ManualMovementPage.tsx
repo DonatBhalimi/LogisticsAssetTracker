@@ -37,7 +37,11 @@ export function ManualMovementPage() {
         <Link to={`/assets/${id}`}>&larr; Back to Asset</Link>
       </p>
       {error && <ErrorBanner message={error} />}
-      <MovementUpdateView asset={asset} onSubmitMovement={(request) => movementsApi.createManualMovement(id, request)} />
+      <MovementUpdateView
+        asset={asset}
+        sourceType="Manual"
+        onSubmitMovement={(request) => movementsApi.createManualMovement(id, request)}
+      />
     </div>
   );
 }

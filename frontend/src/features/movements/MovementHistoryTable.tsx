@@ -2,9 +2,7 @@ import { Badge } from "../../components/Badge";
 import { EmptyState } from "../../components/EmptyState";
 import type { AssetMovement } from "../../types/movement";
 
-// Read-only movement history (Document 07 Screen 8). Status/condition columns are
-// shown because the data exists on every record — Phase 3 movements simply always
-// have previous === new for those two fields, since this phase is location-only.
+// Read-only movement history (Document 07 Screen 8).
 export function MovementHistoryTable({ movements }: { movements: AssetMovement[] }) {
   if (movements.length === 0) {
     return <EmptyState label="No movement history yet." />;

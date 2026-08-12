@@ -1,4 +1,5 @@
-import type { AssetCondition, AssetStatus } from "./asset";
+import type { Asset, AssetCondition, AssetStatus } from "./asset";
+import type { MovementApproval } from "./approval";
 
 export type SourceType = "Manual" | "QR";
 
@@ -23,17 +24,29 @@ export interface AssetMovement {
   createdAt: string;
 }
 
-// Phase 3 scope (Document 10): location-only. No status/condition fields —
-// the UI must not offer controls for changes this phase does not support.
+// Phase 4 (Document 05): status and condition changes are now supported. sourceType
+// remains backend-derived — the UI must never let a user choose it.
 export interface MovementRequest {
   toLocationId?: string;
+  newStatus?: AssetStatus;
+  newCondition?: AssetCondition;
   notes?: string;
 }
 
+// resultType is "MovementCreated" (movement/asset populated) or "ApprovalRequired"
+// (approval populated, assetUnchanged true, movement/asset stay absent).
 export interface MovementResult {
   resultType: string;
-  movement: AssetMovement;
-  asset: import("./asset").Asset;
+  movement?: AssetMovement | null;
+  asset?: Asset | null;
+  approval?: MovementApproval | null;
+  assetUnchanged?: boolean | null;
+}
+
+// Manager/Admin direct Lost-to-Available reactivation (Document 06 POST /assets/{id}/reactivate).
+export interface ReactivateAssetRequest {
+  toLocationId?: string;
+  decisionNote: string;
 }
 
 export interface AssetMovementListQuery {

@@ -36,7 +36,11 @@ export function QrMovementPage() {
         <Link to="/scan">&larr; Back to Scanner</Link>
       </p>
       {error && <ErrorBanner message={error} />}
-      <MovementUpdateView asset={asset} onSubmitMovement={(request) => movementsApi.createQrMovement(qrCodeValue, request)} />
+      <MovementUpdateView
+        asset={asset}
+        sourceType="QR"
+        onSubmitMovement={(request) => movementsApi.createQrMovement(qrCodeValue, request)}
+      />
     </div>
   );
 }

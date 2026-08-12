@@ -8,9 +8,10 @@ import { Badge } from "../components/Badge";
 import { ErrorBanner } from "../components/ErrorBanner";
 import { LoadingState } from "../components/LoadingState";
 import { MovementHistoryTable } from "../features/movements/MovementHistoryTable";
+import { ReactivateAssetForm } from "../features/assets/ReactivateAssetForm";
 import { ApiError } from "../types/common";
 import type { Asset, AssetQr } from "../types/asset";
-import type { AssetMovement } from "../types/movement";
+import type { AssetMovement, ReactivateAssetRequest } from "../types/movement";
 
 export function AssetDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -21,10 +22,12 @@ export function AssetDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
+  const [showReactivateForm, setShowReactivateForm] = useState(false);
 
   const canViewQr = user?.role === "Admin" || user?.role === "Manager";
+  const canReactivate = user?.role === "Admin" || user?.role === "Manager";
 
-  useEffect(() => {
+  async function loadAssetData() {
     if (!id) return;
     setIsLoading(true);
     setError(null);
@@ -35,7 +38,7 @@ export function AssetDetailsPage() {
       movementsApi.getMovementHistory(id, { pageSize: 50, sortDirection: "desc" }).then((result) => result.items),
     ];
 
-    Promise.all(requests)
+    return Promise.all(requests)
       .then(([assetResult, qrResult, movementResult]) => {
         setAsset(assetResult);
         setQr(qrResult);
@@ -43,6 +46,10 @@ export function AssetDetailsPage() {
       })
       .catch((err) => setError(err instanceof ApiError ? err.message : "Unable to load asset."))
       .finally(() => setIsLoading(false));
+  }
+
+  useEffect(() => {
+    void loadAssetData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, canViewQr]);
 
@@ -59,6 +66,14 @@ export function AssetDetailsPage() {
     } finally {
       setIsDeactivating(false);
     }
+  }
+
+  async function handleReactivate(request: ReactivateAssetRequest) {
+    if (!id) return;
+    setError(null);
+    await assetsApi.reactivateAsset(id, request);
+    setShowReactivateForm(false);
+    await loadAssetData();
   }
 
   if (isLoading) {
@@ -115,6 +130,12 @@ export function AssetDetailsPage() {
       <div style={{ marginTop: "1.5rem" }}>
         {/* Inactive or Retired assets must not show enabled movement actions (Document 07). */}
         {asset.isActive && asset.status !== "Retired" && <Link to={`/assets/${asset.id}/movement`}>Update Movement</Link>}{" "}
+        {/* Manager/Admin direct Lost reactivation uses this dedicated action, never the normal movement form (Document 07). */}
+        {canReactivate && asset.isActive && asset.status === "Lost" && (
+          <button onClick={() => setShowReactivateForm((v) => !v)}>
+            {showReactivateForm ? "Cancel Reactivation" : "Reactivate Lost Asset"}
+          </button>
+        )}{" "}
         {user?.role === "Admin" && (
           <>
             <Link to={`/assets/${asset.id}/edit`}>Edit Basic Information</Link>{" "}
@@ -126,6 +147,14 @@ export function AssetDetailsPage() {
           </>
         )}
       </div>
+
+      {canReactivate && asset.isActive && asset.status === "Lost" && showReactivateForm && (
+        <ReactivateAssetForm
+          currentLocationId={asset.currentLocationId}
+          onSubmit={handleReactivate}
+          onCancel={() => setShowReactivateForm(false)}
+        />
+      )}
 
       <div style={{ marginTop: "2rem" }}>
         <h2>Movement History</h2>

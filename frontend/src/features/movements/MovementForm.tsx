@@ -90,18 +90,17 @@ export function MovementForm({ currentLocationId, currentStatus, currentConditio
   }
 
   return (
-    <form onSubmit={(event) => void handleSubmit(event)} style={{ border: "1px solid #ddd", padding: "1rem", maxWidth: 480 }}>
+    <form onSubmit={(event) => void handleSubmit(event)} className="form-card">
       <h3>Update Movement</h3>
       {error && <ErrorBanner message={error} />}
 
-      <div style={{ marginBottom: "0.75rem" }}>
+      <div className="field">
         <label htmlFor="toLocationId">New Location</label>
         <select
           id="toLocationId"
           value={toLocationId}
           onChange={(event) => setToLocationId(event.target.value)}
           disabled={isLoadingLocations}
-          style={{ display: "block", width: "100%" }}
         >
           <option value="">{isLoadingLocations ? "Loading locations..." : "No change"}</option>
           {destinationOptions.map((l) => (
@@ -112,14 +111,9 @@ export function MovementForm({ currentLocationId, currentStatus, currentConditio
         </select>
       </div>
 
-      <div style={{ marginBottom: "0.75rem" }}>
+      <div className="field">
         <label htmlFor="newStatus">New Status</label>
-        <select
-          id="newStatus"
-          value={newStatus}
-          onChange={(event) => setNewStatus(event.target.value as AssetStatus | "")}
-          style={{ display: "block", width: "100%" }}
-        >
+        <select id="newStatus" value={newStatus} onChange={(event) => setNewStatus(event.target.value as AssetStatus | "")}>
           <option value="">No change</option>
           {statusOptions.map((s) => (
             <option key={s} value={s}>
@@ -129,13 +123,12 @@ export function MovementForm({ currentLocationId, currentStatus, currentConditio
         </select>
       </div>
 
-      <div style={{ marginBottom: "0.75rem" }}>
+      <div className="field">
         <label htmlFor="newCondition">New Condition</label>
         <select
           id="newCondition"
           value={newCondition}
           onChange={(event) => setNewCondition(event.target.value as AssetCondition | "")}
-          style={{ display: "block", width: "100%" }}
         >
           <option value="">No change</option>
           {conditionOptions.map((c) => (
@@ -146,26 +139,24 @@ export function MovementForm({ currentLocationId, currentStatus, currentConditio
         </select>
       </div>
 
-      <div style={{ marginBottom: "0.75rem" }}>
+      <div className="field">
         <label htmlFor="notes">Notes (optional)</label>
-        <textarea
-          id="notes"
-          value={notes}
-          onChange={(event) => setNotes(event.target.value)}
-          rows={3}
-          style={{ display: "block", width: "100%" }}
-        />
-        <p style={{ color: "#666", fontSize: "0.8rem" }}>
+        <textarea id="notes" value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} />
+        <span className="hint">
           Notes are required for some transitions (Lost reactivation requests, inspection clearance, Lost-to-Retired) — the
           backend will report if a note is missing.
-        </p>
+        </span>
       </div>
 
-      <button type="submit" disabled={!canSubmit || isSubmitting}>
-        {isSubmitting ? "Submitting..." : "Submit Movement"}
-      </button>
+      <div className="form-actions">
+        <button type="submit" className="btn btn-primary" disabled={!canSubmit || isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit Movement"}
+        </button>
+      </div>
       {!canSubmit && !isLoadingLocations && (
-        <p style={{ color: "#666", fontSize: "0.85rem" }}>Change the location, status, or condition to submit a movement.</p>
+        <p className="cell-hint" style={{ marginTop: "10px" }}>
+          Change the location, status, or condition to submit a movement.
+        </p>
       )}
     </form>
   );

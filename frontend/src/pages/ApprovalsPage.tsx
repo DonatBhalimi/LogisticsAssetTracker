@@ -50,17 +50,24 @@ export function ApprovalsPage() {
 
   return (
     <div>
-      <h1>Approvals</h1>
+      <div className="page-header">
+        <div>
+          <h1>Approvals</h1>
+          <p className="page-header-desc">Review Operator Lost-reactivation requests.</p>
+        </div>
+      </div>
 
-      <div style={{ marginBottom: "1rem" }}>
-        <label htmlFor="statusFilter">Status</label>{" "}
-        <select id="statusFilter" value={status} onChange={(event) => setStatus(event.target.value as ApprovalStatus | "")}>
-          {STATUS_FILTERS.map((s) => (
-            <option key={s || "all"} value={s}>
-              {s || "All"}
-            </option>
-          ))}
-        </select>
+      <div className="filters-bar">
+        <div className="field">
+          <label htmlFor="statusFilter">Status</label>
+          <select id="statusFilter" value={status} onChange={(event) => setStatus(event.target.value as ApprovalStatus | "")}>
+            {STATUS_FILTERS.map((s) => (
+              <option key={s || "all"} value={s}>
+                {s || "All"}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {error && <ErrorBanner message={error} />}

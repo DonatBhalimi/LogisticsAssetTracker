@@ -90,78 +90,96 @@ export function AssetDetailsPage() {
 
   return (
     <div>
-      <p>
+      <p style={{ marginBottom: "12px" }}>
         <Link to="/assets">&larr; Back to Assets</Link>
       </p>
-      <h1>{asset.name}</h1>
+
+      <div className="page-header">
+        <div>
+          <h1>{asset.name}</h1>
+          <p className="page-header-desc">{asset.assetCode}</p>
+        </div>
+        <div className="page-header-actions">
+          {/* Inactive or Retired assets must not show enabled movement actions (Document 07). */}
+          {asset.isActive && asset.status !== "Retired" && (
+            <Link to={`/assets/${asset.id}/movement`} className="btn btn-primary">
+              Update Movement
+            </Link>
+          )}
+          {/* Manager/Admin direct Lost reactivation uses this dedicated action, never the normal movement form (Document 07). */}
+          {canReactivate && asset.isActive && asset.status === "Lost" && (
+            <button className="btn btn-secondary" onClick={() => setShowReactivateForm((v) => !v)}>
+              {showReactivateForm ? "Cancel Reactivation" : "Reactivate Lost Asset"}
+            </button>
+          )}
+          {user?.role === "Admin" && (
+            <>
+              <Link to={`/assets/${asset.id}/edit`} className="btn btn-secondary">
+                Edit
+              </Link>
+              {asset.isActive && (
+                <button className="btn btn-danger" onClick={() => void handleDeactivate()} disabled={isDeactivating}>
+                  {isDeactivating ? "Deactivating..." : "Deactivate"}
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
       {error && <ErrorBanner message={error} />}
 
-      <dl>
-        <dt>Asset Code</dt>
-        <dd>{asset.assetCode}</dd>
-        <dt>Type</dt>
-        <dd>{asset.type}</dd>
-        <dt>Current Location</dt>
-        <dd>{asset.currentLocationName}</dd>
-        <dt>Status</dt>
-        <dd>
-          <Badge text={asset.status} />
-        </dd>
-        <dt>Condition</dt>
-        <dd>
-          <Badge text={asset.condition} />
-        </dd>
-        <dt>Assigned User</dt>
-        <dd>{asset.assignedToUserName ?? "Unassigned"}</dd>
-        <dt>Active</dt>
-        <dd>
-          <Badge text={asset.isActive ? "Active" : "Inactive"} />
-        </dd>
-      </dl>
+      <div className="card card-padded">
+        <dl className="detail-grid">
+          <dt>Type</dt>
+          <dd>{asset.type}</dd>
+          <dt>Current Location</dt>
+          <dd>{asset.currentLocationName}</dd>
+          <dt>Status</dt>
+          <dd>
+            <Badge text={asset.status} />
+          </dd>
+          <dt>Condition</dt>
+          <dd>
+            <Badge text={asset.condition} />
+          </dd>
+          <dt>Assigned User</dt>
+          <dd>{asset.assignedToUserName ?? "Unassigned"}</dd>
+          <dt>Active</dt>
+          <dd>
+            <Badge text={asset.isActive ? "Active" : "Inactive"} />
+          </dd>
+        </dl>
 
-      {canViewQr && qr && (
-        <div style={{ margin: "1.5rem 0" }}>
-          <h2>QR Code</h2>
-          <QRCodeSVG value={qr.qrUrl} size={160} />
-          <p style={{ color: "#666" }}>{qr.qrCodeValue}</p>
-        </div>
-      )}
-
-      <div style={{ marginTop: "1.5rem" }}>
-        {/* Inactive or Retired assets must not show enabled movement actions (Document 07). */}
-        {asset.isActive && asset.status !== "Retired" && <Link to={`/assets/${asset.id}/movement`}>Update Movement</Link>}{" "}
-        {/* Manager/Admin direct Lost reactivation uses this dedicated action, never the normal movement form (Document 07). */}
-        {canReactivate && asset.isActive && asset.status === "Lost" && (
-          <button onClick={() => setShowReactivateForm((v) => !v)}>
-            {showReactivateForm ? "Cancel Reactivation" : "Reactivate Lost Asset"}
-          </button>
-        )}{" "}
-        {user?.role === "Admin" && (
-          <>
-            <Link to={`/assets/${asset.id}/edit`}>Edit Basic Information</Link>{" "}
-            {asset.isActive && (
-              <button onClick={() => void handleDeactivate()} disabled={isDeactivating}>
-                {isDeactivating ? "Deactivating..." : "Deactivate Asset"}
-              </button>
-            )}
-          </>
+        {canViewQr && qr && (
+          <div style={{ marginTop: "24px", paddingTop: "24px", borderTop: "1px solid var(--border)" }}>
+            <div className="section-label">QR Code</div>
+            <QRCodeSVG value={qr.qrUrl} size={140} />
+            <p className="cell-hint" style={{ marginTop: "8px" }}>
+              {qr.qrCodeValue}
+            </p>
+          </div>
         )}
       </div>
 
       {canReactivate && asset.isActive && asset.status === "Lost" && showReactivateForm && (
-        <ReactivateAssetForm
-          currentLocationId={asset.currentLocationId}
-          onSubmit={handleReactivate}
-          onCancel={() => setShowReactivateForm(false)}
-        />
+        <div style={{ marginTop: "20px" }}>
+          <ReactivateAssetForm
+            currentLocationId={asset.currentLocationId}
+            onSubmit={handleReactivate}
+            onCancel={() => setShowReactivateForm(false)}
+          />
+        </div>
       )}
 
-      <div style={{ marginTop: "2rem" }}>
-        <h2>Movement History</h2>
+      <div style={{ marginTop: "32px" }}>
+        <h2 style={{ marginBottom: "12px" }}>Movement History</h2>
         <MovementHistoryTable movements={movements} />
       </div>
 
-      <p style={{ color: "#666", marginTop: "2rem" }}>Risk recommendations are not yet available (later phases).</p>
+      <p className="cell-hint" style={{ marginTop: "24px" }}>
+        Risk recommendations are not yet available (later phases).
+      </p>
     </div>
   );
 }

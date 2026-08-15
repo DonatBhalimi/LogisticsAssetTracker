@@ -61,7 +61,9 @@ public class AuditLogService : IAuditLogService
 
         if (!string.IsNullOrWhiteSpace(query.Action))
         {
-            logs = logs.Where(l => l.Action == query.Action);
+            // Case-insensitive contains: a free-text search box, not a dropdown, so an
+            // exact case-sensitive match is unusably strict.
+            logs = logs.Where(l => EF.Functions.ILike(l.Action, $"%{query.Action}%"));
         }
 
         if (query.IsSuspicious.HasValue)
@@ -71,12 +73,18 @@ public class AuditLogService : IAuditLogService
 
         if (query.FromDate.HasValue)
         {
-            logs = logs.Where(l => l.CreatedAt >= query.FromDate.Value);
+            // Query-string-bound DateTime values come back with Kind=Unspecified; Npgsql
+            // refuses to compare that against a timestamptz column, so it must be pinned
+            // to UTC explicitly before use (the stored CreatedAt values are always UTC).
+            var fromDateUtc = DateTime.SpecifyKind(query.FromDate.Value.Date, DateTimeKind.Utc);
+            logs = logs.Where(l => l.CreatedAt >= fromDateUtc);
         }
 
         if (query.ToDate.HasValue)
         {
-            logs = logs.Where(l => l.CreatedAt <= query.ToDate.Value);
+            // Inclusive of the entire "to" day, not just its midnight instant.
+            var toDateUtc = DateTime.SpecifyKind(query.ToDate.Value.Date, DateTimeKind.Utc).AddDays(1);
+            logs = logs.Where(l => l.CreatedAt < toDateUtc);
         }
 
         logs = query.SortDirection?.ToLowerInvariant() == "asc"

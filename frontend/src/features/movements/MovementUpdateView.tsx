@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
 import { Badge } from "../../components/Badge";
@@ -24,28 +24,34 @@ export function MovementUpdateView({ asset, sourceType, onSubmitMovement }: Move
 
   return (
     <div>
-      <h1>{asset.name}</h1>
-      <dl>
-        <dt>Asset Code</dt>
-        <dd>{asset.assetCode}</dd>
-        <dt>Current Location</dt>
-        <dd>{asset.currentLocationName}</dd>
-        <dt>Status</dt>
-        <dd>
-          <Badge text={asset.status} />
-        </dd>
-        <dt>Condition</dt>
-        <dd>
-          <Badge text={asset.condition} />
-        </dd>
-      </dl>
+      <div className="page-header">
+        <div>
+          <h1>{asset.name}</h1>
+          <p className="page-header-desc">{asset.assetCode}</p>
+        </div>
+      </div>
 
-      {!asset.isActive && <p style={{ color: "#b71c1c" }}>This asset is inactive and cannot receive movement updates.</p>}
+      <div className="card card-padded" style={{ marginBottom: "20px" }}>
+        <dl className="detail-grid">
+          <dt>Current Location</dt>
+          <dd>{asset.currentLocationName}</dd>
+          <dt>Status</dt>
+          <dd>
+            <Badge text={asset.status} />
+          </dd>
+          <dt>Condition</dt>
+          <dd>
+            <Badge text={asset.condition} />
+          </dd>
+        </dl>
+      </div>
+
+      {!asset.isActive && <ErrorNote>This asset is inactive and cannot receive movement updates.</ErrorNote>}
       {asset.isActive && asset.status === "Retired" && (
-        <p style={{ color: "#b71c1c" }}>This asset is Retired and cannot receive normal movement updates.</p>
+        <ErrorNote>This asset is Retired and cannot receive normal movement updates.</ErrorNote>
       )}
       {showReactivateHint && (
-        <p style={{ color: "#666" }}>
+        <p className="cell-hint" style={{ marginBottom: "16px" }}>
           To reactivate this Lost asset directly, use the <strong>Reactivate Lost Asset</strong> action on the asset details
           page instead of this form.
         </p>
@@ -53,22 +59,26 @@ export function MovementUpdateView({ asset, sourceType, onSubmitMovement }: Move
 
       {result ? (
         result.resultType === "ApprovalRequired" && result.approval ? (
-          <div style={{ border: "1px solid #e65100", padding: "1rem", maxWidth: 480 }}>
+          <div className="card card-padded" style={{ maxWidth: 480, boxShadow: "inset 3px 0 0 var(--warning-text)" }}>
             <h3>Reactivation Requested</h3>
-            <p>
+            <p style={{ marginTop: "10px" }}>
               A Lost-reactivation request was submitted and is now <Badge text={result.approval.approvalStatus} />. A
               Manager or Admin must approve it before the asset becomes Available.
             </p>
-            <Link to={`/assets/${asset.id}`}>View Asset</Link>
+            <p style={{ marginTop: "14px" }}>
+              <Link to={`/assets/${asset.id}`}>View Asset</Link>
+            </p>
           </div>
         ) : (
           result.movement && result.asset && (
-            <div style={{ border: "1px solid #1b5e20", padding: "1rem", maxWidth: 480 }}>
+            <div className="card card-padded" style={{ maxWidth: 480, boxShadow: "inset 3px 0 0 var(--success-text)" }}>
               <h3>Movement Completed</h3>
-              <p>
+              <p style={{ marginTop: "10px" }}>
                 Moved to <strong>{result.movement.toLocationName}</strong> via {result.movement.sourceType}.
               </p>
-              <Link to={`/assets/${result.asset.id}`}>View Asset</Link>
+              <p style={{ marginTop: "14px" }}>
+                <Link to={`/assets/${result.asset.id}`}>View Asset</Link>
+              </p>
             </div>
           )
         )
@@ -85,4 +95,8 @@ export function MovementUpdateView({ asset, sourceType, onSubmitMovement }: Move
       )}
     </div>
   );
+}
+
+function ErrorNote({ children }: { children: ReactNode }) {
+  return <div className="error-banner">{children}</div>;
 }

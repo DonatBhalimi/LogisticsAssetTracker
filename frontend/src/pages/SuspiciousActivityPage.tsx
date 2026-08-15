@@ -54,27 +54,31 @@ export function SuspiciousActivityPage() {
 
   return (
     <div>
-      <h1>Suspicious Activity</h1>
-      <p style={{ color: "#666" }}>Completed movements and blocked attempts that matched an explicit suspicious rule.</p>
+      <div className="page-header">
+        <div>
+          <h1>Suspicious Activity</h1>
+          <p className="page-header-desc">Completed movements and blocked attempts that matched an explicit suspicious rule.</p>
+        </div>
+      </div>
 
       <form
         onSubmit={(event) => {
           event.preventDefault();
           void refresh();
         }}
-        style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", alignItems: "flex-end", marginBottom: "1rem" }}
+        className="filters-bar"
       >
-        <div>
+        <div className="field">
           <label htmlFor="fromDate">From</label>
-          <input id="fromDate" type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} style={{ display: "block" }} />
+          <input id="fromDate" type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} />
         </div>
-        <div>
+        <div className="field">
           <label htmlFor="toDate">To</label>
-          <input id="toDate" type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} style={{ display: "block" }} />
+          <input id="toDate" type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} />
         </div>
-        <div>
+        <div className="field">
           <label htmlFor="entityType">Event Type</label>
-          <select id="entityType" value={entityType} onChange={(event) => setEntityType(event.target.value)} style={{ display: "block" }}>
+          <select id="entityType" value={entityType} onChange={(event) => setEntityType(event.target.value)}>
             {EVENT_TYPES.map((t) => (
               <option key={t || "all"} value={t}>
                 {t || "All"}
@@ -82,11 +86,13 @@ export function SuspiciousActivityPage() {
             ))}
           </select>
         </div>
-        <div>
+        <div className="field">
           <label htmlFor="userId">User ID</label>
-          <input id="userId" type="text" value={userId} onChange={(event) => setUserId(event.target.value)} placeholder="user GUID" style={{ display: "block" }} />
+          <input id="userId" type="text" value={userId} onChange={(event) => setUserId(event.target.value)} placeholder="user GUID" />
         </div>
-        <button type="submit">Apply Filters</button>
+        <button type="submit" className="btn btn-secondary">
+          Apply Filters
+        </button>
       </form>
 
       {error && <ErrorBanner message={error} />}

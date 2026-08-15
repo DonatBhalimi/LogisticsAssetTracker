@@ -14,30 +14,38 @@ interface ApprovalsTableProps {
 // Document 07 Screen 9: Pending records may be decided; Approved/Rejected are read-only.
 export function ApprovalsTable({ approvals, onApprove, onReject }: ApprovalsTableProps) {
   if (approvals.length === 0) {
-    return <EmptyState label="No approval requests found." />;
+    return (
+      <div className="table-card">
+        <EmptyState label="No approval requests found." />
+      </div>
+    );
   }
 
   return (
-    <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
-      <thead>
-        <tr>
-          <th align="left">Asset</th>
-          <th align="left">Requested Change</th>
-          <th align="left">Requested By</th>
-          <th align="left">Source</th>
-          <th align="left">Request Reason</th>
-          <th align="left">Status</th>
-          <th align="left">Decision Note</th>
-          <th align="left">Requested At</th>
-          <th align="left">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {approvals.map((approval) => (
-          <ApprovalRow key={approval.id} approval={approval} onApprove={onApprove} onReject={onReject} />
-        ))}
-      </tbody>
-    </table>
+    <div className="table-card">
+      <div className="table-wrap">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th align="left">Asset</th>
+              <th align="left">Requested Change</th>
+              <th align="left">Requested By</th>
+              <th align="left">Source</th>
+              <th align="left">Request Reason</th>
+              <th align="left">Status</th>
+              <th align="left">Decision Note</th>
+              <th align="left">Requested At</th>
+              <th align="left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {approvals.map((approval) => (
+              <ApprovalRow key={approval.id} approval={approval} onApprove={onApprove} onReject={onReject} />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 
@@ -75,25 +83,28 @@ function ApprovalRow({
   }
 
   return (
-    <tr style={{ borderTop: "1px solid #eee", verticalAlign: "top" }}>
+    <tr>
       <td>
-        {approval.assetCode}
-        <br />
-        {approval.assetName}
+        <div>{approval.assetCode}</div>
+        <div className="cell-muted">{approval.assetName}</div>
       </td>
       <td>
-        Status: <Badge text={approval.requestedStatus} /> Condition: <Badge text={approval.requestedCondition} />
-        <br />
-        {approval.requestedLocationName ?? "Current location"}
+        <div className="btn-row" style={{ marginBottom: "4px" }}>
+          <Badge text={approval.requestedStatus} />
+          <Badge text={approval.requestedCondition} />
+        </div>
+        <div className="cell-muted">{approval.requestedLocationName ?? "Current location"}</div>
       </td>
       <td>{approval.requestedByUserName}</td>
-      <td>{approval.requestedSourceType}</td>
-      <td>{approval.requestReason}</td>
+      <td>
+        <Badge text={approval.requestedSourceType} />
+      </td>
+      <td className="cell-muted">{approval.requestReason}</td>
       <td>
         <Badge text={approval.approvalStatus} />
       </td>
-      <td>{approval.decisionNote ?? "—"}</td>
-      <td>{new Date(approval.createdAt).toLocaleString()}</td>
+      <td className="cell-muted">{approval.decisionNote ?? "—"}</td>
+      <td className="cell-muted">{new Date(approval.createdAt).toLocaleString()}</td>
       <td style={{ minWidth: 220 }}>
         {isPending ? (
           <>
@@ -103,17 +114,19 @@ function ApprovalRow({
               onChange={(event) => setDecisionNote(event.target.value)}
               placeholder="Decision note (required)"
               rows={2}
-              style={{ display: "block", width: "100%", marginBottom: "0.35rem" }}
+              style={{ marginBottom: "8px" }}
             />
-            <button onClick={() => void decide("approve")} disabled={!canDecide || isSubmitting}>
-              Approve
-            </button>{" "}
-            <button onClick={() => void decide("reject")} disabled={!canDecide || isSubmitting}>
-              Reject
-            </button>
+            <div className="btn-row">
+              <button className="btn btn-primary btn-sm" onClick={() => void decide("approve")} disabled={!canDecide || isSubmitting}>
+                Approve
+              </button>
+              <button className="btn btn-danger btn-sm" onClick={() => void decide("reject")} disabled={!canDecide || isSubmitting}>
+                Reject
+              </button>
+            </div>
           </>
         ) : (
-          "—"
+          <span className="cell-muted">—</span>
         )}
       </td>
     </tr>

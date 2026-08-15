@@ -48,18 +48,17 @@ export function ReactivateAssetForm({ currentLocationId, onSubmit, onCancel }: R
   }
 
   return (
-    <form onSubmit={(event) => void handleSubmit(event)} style={{ border: "1px solid #e65100", padding: "1rem", maxWidth: 480, marginTop: "1rem" }}>
+    <form onSubmit={(event) => void handleSubmit(event)} className="form-card" style={{ boxShadow: "inset 3px 0 0 var(--warning-text)" }}>
       <h3>Reactivate Lost Asset</h3>
       {error && <ErrorBanner message={error} />}
 
-      <div style={{ marginBottom: "0.75rem" }}>
+      <div className="field">
         <label htmlFor="reactivateLocation">Destination (optional)</label>
         <select
           id="reactivateLocation"
           value={toLocationId}
           onChange={(event) => setToLocationId(event.target.value)}
           disabled={isLoadingLocations}
-          style={{ display: "block", width: "100%" }}
         >
           <option value="">Keep current location</option>
           {destinationOptions.map((l) => (
@@ -70,23 +69,19 @@ export function ReactivateAssetForm({ currentLocationId, onSubmit, onCancel }: R
         </select>
       </div>
 
-      <div style={{ marginBottom: "0.75rem" }}>
+      <div className="field">
         <label htmlFor="decisionNote">Decision Note (required)</label>
-        <textarea
-          id="decisionNote"
-          value={decisionNote}
-          onChange={(event) => setDecisionNote(event.target.value)}
-          rows={3}
-          style={{ display: "block", width: "100%" }}
-        />
+        <textarea id="decisionNote" value={decisionNote} onChange={(event) => setDecisionNote(event.target.value)} rows={3} />
       </div>
 
-      <button type="submit" disabled={!canSubmit || isSubmitting}>
-        {isSubmitting ? "Reactivating..." : "Confirm Reactivation"}
-      </button>{" "}
-      <button type="button" onClick={onCancel} disabled={isSubmitting}>
-        Cancel
-      </button>
+      <div className="form-actions">
+        <button type="submit" className="btn btn-primary" disabled={!canSubmit || isSubmitting}>
+          {isSubmitting ? "Reactivating..." : "Confirm Reactivation"}
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={isSubmitting}>
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }

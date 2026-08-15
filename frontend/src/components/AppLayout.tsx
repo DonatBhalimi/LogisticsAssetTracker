@@ -31,23 +31,30 @@ export function AppLayout() {
   }
 
   return (
-    <div>
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1.5rem", borderBottom: "1px solid #ddd" }}>
-        <nav style={{ display: "flex", gap: "1rem" }}>
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <div className="sidebar-brand">Logistics Asset Tracker</div>
+          <div className="sidebar-brand-sub">Operations Console</div>
+        </div>
+        <nav className="sidebar-nav">
           {links.map((link) => (
-            <NavLink key={link.to} to={link.to}>
+            <NavLink key={link.to} to={link.to} className={({ isActive }) => `sidebar-link${isActive ? " active" : ""}`}>
               {link.label}
             </NavLink>
           ))}
         </nav>
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <span>
-            {user.fullName} ({user.role})
-          </span>
-          <button onClick={() => void logout()}>Log out</button>
+        <div className="sidebar-footer">
+          <div>
+            <div className="sidebar-user-name">{user.fullName}</div>
+            <div className="sidebar-user-role">{user.role}</div>
+          </div>
+          <button className="btn btn-secondary btn-sm" onClick={() => void logout()}>
+            Log out
+          </button>
         </div>
-      </header>
-      <main style={{ padding: "1.5rem" }}>
+      </aside>
+      <main className="main-content">
         <Outlet />
       </main>
     </div>

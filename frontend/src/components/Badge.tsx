@@ -1,32 +1,41 @@
 // Badges are always text-based; color is a secondary cue, never the only signal (Document 07).
-const BADGE_COLORS: Record<string, string> = {
-  Available: "#1b5e20",
-  InTransit: "#0d47a1",
-  Delivered: "#4a148c",
-  Lost: "#b71c1c",
-  Retired: "#424242",
-  Good: "#1b5e20",
-  Damaged: "#b71c1c",
-  NeedsInspection: "#e65100",
-  Active: "#1b5e20",
-  Inactive: "#616161",
+// Soft-tinted tones, not solid fills — matches the enterprise dashboard style direction.
+type BadgeTone = "success" | "danger" | "warning" | "info" | "violet" | "neutral";
+
+const BADGE_TONES: Record<string, BadgeTone> = {
+  // Status
+  Available: "success",
+  InTransit: "info",
+  Delivered: "violet",
+  Lost: "danger",
+  Retired: "neutral",
+  // Condition
+  Good: "success",
+  Damaged: "danger",
+  NeedsInspection: "warning",
+  // Active / inactive
+  Active: "success",
+  Inactive: "neutral",
+  // Suspicious indicator (Document 06/07)
+  Suspicious: "danger",
+  No: "neutral",
+  // Approval status (Document 04)
+  Pending: "warning",
+  Approved: "success",
+  Rejected: "danger",
+  // SourceType (Document 05/06)
+  Manual: "info",
+  QR: "info",
+  // Roles (Document 02)
+  Admin: "neutral",
+  Manager: "info",
+  Operator: "neutral",
+  // Audit log event type (completed vs. blocked)
+  "Blocked Attempt": "warning",
+  "Completed Action": "neutral",
 };
 
 export function Badge({ text }: { text: string }) {
-  const color = BADGE_COLORS[text] ?? "#333333";
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        padding: "0.15rem 0.5rem",
-        borderRadius: 4,
-        border: `1px solid ${color}`,
-        color,
-        fontSize: "0.85rem",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {text}
-    </span>
-  );
+  const tone = BADGE_TONES[text] ?? "neutral";
+  return <span className={`badge badge-${tone}`}>{text}</span>;
 }

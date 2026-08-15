@@ -29,36 +29,31 @@ export function LoginPage() {
   }
 
   return (
-    <div style={{ maxWidth: 360, margin: "4rem auto" }}>
-      <h1>Logistics Asset Tracker</h1>
-      {error && <ErrorBanner message={error} />}
-      <form onSubmit={(event) => void handleSubmit(event)}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-            style={{ display: "block", width: "100%" }}
-          />
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-            style={{ display: "block", width: "100%" }}
-          />
-        </div>
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Logging in..." : "Log in"}
-        </button>
-      </form>
+    <div className="login-shell">
+      <div className="login-card">
+        <h1 className="login-title">Logistics Asset Tracker</h1>
+        <p className="login-subtitle">Sign in to track, move, and audit your logistics assets.</p>
+        {error && <ErrorBanner message={error} />}
+        <form onSubmit={(event) => void handleSubmit(event)}>
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+          </div>
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary" disabled={isSubmitting} style={{ width: "100%", marginTop: "4px" }}>
+            {isSubmitting ? "Logging in..." : "Log in"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

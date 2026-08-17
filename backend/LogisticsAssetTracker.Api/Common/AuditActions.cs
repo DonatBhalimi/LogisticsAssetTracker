@@ -19,4 +19,5 @@ public static class AuditActions
     public const string AssetLostReactivated = "AssetLostReactivated";
     public const string AssetLostToRetired = "AssetLostToRetired";
     public const string AssetConditionCleared = "AssetConditionCleared";
+    public const string RiskRecommendationGenerated = "RiskRecommendationGenerated";
 }

@@ -10,4 +10,10 @@ public class MovementThresholdsOptions
     public int RepeatedLostReactivationCount { get; set; } = 2;
     public int RepeatedLostReactivationWindowHours { get; set; } = 24;
     public int ConflictingLocationWindowMinutes { get; set; } = 10;
+
+    // Phase 5 risk thresholds (Document 05 Risk Level Assignment).
+    public int MaxInTransitHours { get; set; } = 72;
+    public int HighDelayRiskDays { get; set; } = 7;
+    public int StaleAssetDays { get; set; } = 7;
+    public int HighStaleDays { get; set; } = 14;
 }

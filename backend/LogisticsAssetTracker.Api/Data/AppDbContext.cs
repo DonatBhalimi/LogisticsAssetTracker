@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<AssetMovement> AssetMovements => Set<AssetMovement>();
     public DbSet<MovementApproval> MovementApprovals => Set<MovementApproval>();
+    public DbSet<RiskRecommendation> RiskRecommendations => Set<RiskRecommendation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -118,6 +119,26 @@ public class AppDbContext : DbContext
             entity.HasOne(m => m.RequestedLocation)
                 .WithMany()
                 .HasForeignKey(m => m.RequestedLocationId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+        });
+
+        modelBuilder.Entity<RiskRecommendation>(entity =>
+        {
+            entity.Property(r => r.RiskLevel).HasConversion<string>().HasMaxLength(20);
+            entity.Property(r => r.RiskType).HasConversion<string>().HasMaxLength(30);
+            entity.Property(r => r.GenerationSource).HasConversion<string>().HasMaxLength(30);
+
+            entity.HasIndex(r => r.AssetId);
+
+            entity.HasOne(r => r.Asset)
+                .WithMany()
+                .HasForeignKey(r => r.AssetId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(r => r.GeneratedByUser)
+                .WithMany()
+                .HasForeignKey(r => r.GeneratedByUserId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
         });

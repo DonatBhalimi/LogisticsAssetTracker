@@ -78,6 +78,10 @@ builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IAssetMovementService, AssetMovementService>();
 builder.Services.AddScoped<IMovementApprovalService, MovementApprovalService>();
+builder.Services.AddScoped<RiskRuleEngine>();
+builder.Services.AddScoped<IAiRiskExplanationService, MockAiRiskExplanationService>();
+builder.Services.AddScoped<IRiskAnalysisService, RiskAnalysisService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 var app = builder.Build();
 

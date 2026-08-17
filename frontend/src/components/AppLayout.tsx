@@ -1,9 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
 
-// Navigation is role-based per Document 07. Dashboard and Risk Recommendations are
-// added when those features are implemented (Phase 5) — Phase 4 adds Approvals,
-// Suspicious Activity, and Audit Logs only.
+// Navigation is role-based per Document 07.
 export function AppLayout() {
   const { user, logout } = useAuth();
 
@@ -18,9 +16,11 @@ export function AppLayout() {
   }
 
   if (user.role === "Admin" || user.role === "Manager") {
+    links.unshift({ to: "/dashboard", label: "Dashboard" });
     links.push(
       { to: "/approvals", label: "Approvals" },
       { to: "/suspicious-activity", label: "Suspicious Activity" },
+      { to: "/risk-recommendations", label: "Risk Recommendations" },
       { to: "/audit-logs", label: "Audit Logs" }
     );
   }

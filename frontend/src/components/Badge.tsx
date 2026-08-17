@@ -33,6 +33,14 @@ const BADGE_TONES: Record<string, BadgeTone> = {
   // Audit log event type (completed vs. blocked)
   "Blocked Attempt": "warning",
   "Completed Action": "neutral",
+  // Risk level (Document 04/05) — Low is reserved for future rules
+  Low: "neutral",
+  Medium: "warning",
+  High: "danger",
+  Critical: "danger",
+  // Generation source (Document 08) — distinguishes AI-assisted from rule-only fallback
+  RuleEngine: "neutral",
+  RuleEngineWithAI: "violet",
 };
 
 export function Badge({ text }: { text: string }) {

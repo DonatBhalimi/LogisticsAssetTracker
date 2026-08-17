@@ -3,6 +3,7 @@ using FluentValidation;
 using LogisticsAssetTracker.Api.Domain.Enums;
 using LogisticsAssetTracker.Api.Dtos.Assets;
 using LogisticsAssetTracker.Api.Dtos.Movements;
+using LogisticsAssetTracker.Api.Dtos.Risk;
 using LogisticsAssetTracker.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ public class AssetsController : ControllerBase
 {
     private readonly IAssetService _assetService;
     private readonly IAssetMovementService _movementService;
+    private readonly IRiskAnalysisService _riskAnalysisService;
     private readonly IValidator<CreateAssetRequest> _createValidator;
     private readonly IValidator<UpdateAssetRequest> _updateValidator;
     private readonly IValidator<MovementRequest> _movementValidator;
@@ -24,6 +26,7 @@ public class AssetsController : ControllerBase
     public AssetsController(
         IAssetService assetService,
         IAssetMovementService movementService,
+        IRiskAnalysisService riskAnalysisService,
         IValidator<CreateAssetRequest> createValidator,
         IValidator<UpdateAssetRequest> updateValidator,
         IValidator<MovementRequest> movementValidator,
@@ -31,6 +34,7 @@ public class AssetsController : ControllerBase
     {
         _assetService = assetService;
         _movementService = movementService;
+        _riskAnalysisService = riskAnalysisService;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
         _movementValidator = movementValidator;
@@ -129,6 +133,22 @@ public class AssetsController : ControllerBase
         await _reactivateValidator.ValidateAndThrowAsync(request);
         var result = await _movementService.ReactivateAsync(id, request, CurrentUserId(), CurrentUserRole());
         return StatusCode(StatusCodes.Status201Created, result);
+    }
+
+    [HttpPost("{id:guid}/risk/analyze")]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> AnalyzeRisk(Guid id)
+    {
+        var result = await _riskAnalysisService.AnalyzeAsync(id, CurrentUserId());
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}/risk-recommendations")]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> GetRiskRecommendations(Guid id, [FromQuery] RiskRecommendationListQuery query)
+    {
+        var result = await _riskAnalysisService.GetForAssetAsync(id, query);
+        return Ok(result);
     }
 
     // Document 06 movement outcomes: 201 for a completed movement, 202 when an approval was created instead.

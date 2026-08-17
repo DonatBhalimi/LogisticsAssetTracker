@@ -14,6 +14,8 @@ import { QrScannerPage } from "./pages/QrScannerPage";
 import { ApprovalsPage } from "./pages/ApprovalsPage";
 import { AuditLogsPage } from "./pages/AuditLogsPage";
 import { SuspiciousActivityPage } from "./pages/SuspiciousActivityPage";
+import { DashboardPage } from "./pages/DashboardPage";
+import { RiskRecommendationsPage } from "./pages/RiskRecommendationsPage";
 
 function App() {
   return (
@@ -37,9 +39,11 @@ function App() {
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={["Admin", "Manager"]} />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/approvals" element={<ApprovalsPage />} />
             <Route path="/suspicious-activity" element={<SuspiciousActivityPage />} />
             <Route path="/audit-logs" element={<AuditLogsPage />} />
+            <Route path="/risk-recommendations" element={<RiskRecommendationsPage />} />
           </Route>
         </Route>
       </Route>

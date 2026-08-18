@@ -47,30 +47,18 @@ export function LocationForm({ initialValues, onSubmit, onCancel }: LocationForm
   }
 
   return (
-    <form
-      onSubmit={(event) => void handleSubmit(event)}
-      style={{ border: "1px solid #ddd", padding: "1rem", margin: "1rem 0", maxWidth: 400 }}
-    >
+    <form onSubmit={(event) => void handleSubmit(event)} className="form-card">
       <h3>{initialValues ? "Edit Location" : "Create Location"}</h3>
       {error && <ErrorBanner message={error} />}
-      <div style={{ marginBottom: "0.75rem" }}>
+
+      <div className="field">
         <label htmlFor="name">Name</label>
-        <input
-          id="name"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          required
-          style={{ display: "block", width: "100%" }}
-        />
+        <input id="name" value={name} onChange={(event) => setName(event.target.value)} required />
       </div>
-      <div style={{ marginBottom: "0.75rem" }}>
+
+      <div className="field">
         <label htmlFor="type">Type</label>
-        <select
-          id="type"
-          value={type}
-          onChange={(event) => setType(event.target.value as LocationType)}
-          style={{ display: "block", width: "100%" }}
-        >
+        <select id="type" value={type} onChange={(event) => setType(event.target.value as LocationType)}>
           {LOCATION_TYPES.map((t) => (
             <option key={t} value={t}>
               {t}
@@ -78,30 +66,25 @@ export function LocationForm({ initialValues, onSubmit, onCancel }: LocationForm
           ))}
         </select>
       </div>
-      <div style={{ marginBottom: "0.75rem" }}>
+
+      <div className="field">
         <label htmlFor="address">Address (optional)</label>
-        <input
-          id="address"
-          value={address}
-          onChange={(event) => setAddress(event.target.value)}
-          style={{ display: "block", width: "100%" }}
-        />
+        <input id="address" value={address} onChange={(event) => setAddress(event.target.value)} />
       </div>
-      <div style={{ marginBottom: "0.75rem" }}>
+
+      <div className="field">
         <label htmlFor="description">Description (optional)</label>
-        <input
-          id="description"
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
-          style={{ display: "block", width: "100%" }}
-        />
+        <input id="description" value={description} onChange={(event) => setDescription(event.target.value)} />
       </div>
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Saving..." : "Save"}
-      </button>{" "}
-      <button type="button" onClick={onCancel}>
-        Cancel
-      </button>
+
+      <div className="form-actions">
+        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+          {isSubmitting ? "Saving..." : "Save"}
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }

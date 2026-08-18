@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as assetsApi from "../api/assets";
 import * as usersApi from "../api/users";
 import { ErrorBanner } from "../components/ErrorBanner";
@@ -64,29 +64,29 @@ export function EditAssetPage() {
   }
 
   return (
-    <div style={{ maxWidth: 480 }}>
-      <h1>Edit Asset</h1>
-      <p style={{ color: "#666" }}>Location, status, condition, and QR code can only change through a movement update (Phase 3).</p>
-      {error && <ErrorBanner message={error} />}
-      <form onSubmit={(event) => void handleSubmit(event)}>
-        <div style={{ marginBottom: "0.75rem" }}>
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            required
-            style={{ display: "block", width: "100%" }}
-          />
+    <div>
+      <p style={{ marginBottom: "12px" }}>
+        <Link to={id ? `/assets/${id}` : "/assets"}>&larr; Back to Asset</Link>
+      </p>
+
+      <div className="page-header">
+        <div>
+          <h1>Edit Asset</h1>
+          <p className="page-header-desc">Location, status, condition, and QR code can only change through a movement update.</p>
         </div>
-        <div style={{ marginBottom: "0.75rem" }}>
+      </div>
+
+      <form onSubmit={(event) => void handleSubmit(event)} className="form-card">
+        {error && <ErrorBanner message={error} />}
+
+        <div className="field">
+          <label htmlFor="name">Name</label>
+          <input id="name" value={name} onChange={(event) => setName(event.target.value)} required />
+        </div>
+
+        <div className="field">
           <label htmlFor="type">Type</label>
-          <select
-            id="type"
-            value={type}
-            onChange={(event) => setType(event.target.value as AssetType)}
-            style={{ display: "block", width: "100%" }}
-          >
+          <select id="type" value={type} onChange={(event) => setType(event.target.value as AssetType)}>
             {ASSET_TYPES.map((t) => (
               <option key={t} value={t}>
                 {t}
@@ -94,14 +94,10 @@ export function EditAssetPage() {
             ))}
           </select>
         </div>
-        <div style={{ marginBottom: "0.75rem" }}>
+
+        <div className="field">
           <label htmlFor="assignedTo">Assigned User (optional)</label>
-          <select
-            id="assignedTo"
-            value={assignedToUserId}
-            onChange={(event) => setAssignedToUserId(event.target.value)}
-            style={{ display: "block", width: "100%" }}
-          >
+          <select id="assignedTo" value={assignedToUserId} onChange={(event) => setAssignedToUserId(event.target.value)}>
             <option value="">Unassigned</option>
             {users.map((u) => (
               <option key={u.id} value={u.id}>
@@ -110,9 +106,12 @@ export function EditAssetPage() {
             ))}
           </select>
         </div>
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save"}
-        </button>
+
+        <div className="form-actions">
+          <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+            {isSubmitting ? "Saving..." : "Save"}
+          </button>
+        </div>
       </form>
     </div>
   );

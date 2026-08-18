@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as assetsApi from "../api/assets";
 import * as locationsApi from "../api/locations";
 import * as usersApi from "../api/users";
@@ -67,28 +67,29 @@ export function CreateAssetPage() {
   }
 
   return (
-    <div style={{ maxWidth: 480 }}>
-      <h1>Create Asset</h1>
-      {error && <ErrorBanner message={error} />}
-      <form onSubmit={(event) => void handleSubmit(event)}>
-        <div style={{ marginBottom: "0.75rem" }}>
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            required
-            style={{ display: "block", width: "100%" }}
-          />
+    <div>
+      <p style={{ marginBottom: "12px" }}>
+        <Link to="/assets">&larr; Back to Assets</Link>
+      </p>
+
+      <div className="page-header">
+        <div>
+          <h1>Create Asset</h1>
+          <p className="page-header-desc">Assets are created with a backend-generated code and QR token.</p>
         </div>
-        <div style={{ marginBottom: "0.75rem" }}>
+      </div>
+
+      <form onSubmit={(event) => void handleSubmit(event)} className="form-card">
+        {error && <ErrorBanner message={error} />}
+
+        <div className="field">
+          <label htmlFor="name">Name</label>
+          <input id="name" value={name} onChange={(event) => setName(event.target.value)} required />
+        </div>
+
+        <div className="field">
           <label htmlFor="type">Type</label>
-          <select
-            id="type"
-            value={type}
-            onChange={(event) => setType(event.target.value as AssetType)}
-            style={{ display: "block", width: "100%" }}
-          >
+          <select id="type" value={type} onChange={(event) => setType(event.target.value as AssetType)}>
             {ASSET_TYPES.map((t) => (
               <option key={t} value={t}>
                 {t}
@@ -96,15 +97,10 @@ export function CreateAssetPage() {
             ))}
           </select>
         </div>
-        <div style={{ marginBottom: "0.75rem" }}>
+
+        <div className="field">
           <label htmlFor="location">Initial Location</label>
-          <select
-            id="location"
-            value={currentLocationId}
-            onChange={(event) => setCurrentLocationId(event.target.value)}
-            required
-            style={{ display: "block", width: "100%" }}
-          >
+          <select id="location" value={currentLocationId} onChange={(event) => setCurrentLocationId(event.target.value)} required>
             {locations.map((l) => (
               <option key={l.id} value={l.id}>
                 {l.name}
@@ -112,14 +108,10 @@ export function CreateAssetPage() {
             ))}
           </select>
         </div>
-        <div style={{ marginBottom: "0.75rem" }}>
+
+        <div className="field">
           <label htmlFor="status">Initial Status</label>
-          <select
-            id="status"
-            value={status}
-            onChange={(event) => setStatus(event.target.value as AssetStatus)}
-            style={{ display: "block", width: "100%" }}
-          >
+          <select id="status" value={status} onChange={(event) => setStatus(event.target.value as AssetStatus)}>
             {ASSET_STATUSES.map((s) => (
               <option key={s} value={s}>
                 {s}
@@ -127,14 +119,10 @@ export function CreateAssetPage() {
             ))}
           </select>
         </div>
-        <div style={{ marginBottom: "0.75rem" }}>
+
+        <div className="field">
           <label htmlFor="condition">Initial Condition</label>
-          <select
-            id="condition"
-            value={condition}
-            onChange={(event) => setCondition(event.target.value as AssetCondition)}
-            style={{ display: "block", width: "100%" }}
-          >
+          <select id="condition" value={condition} onChange={(event) => setCondition(event.target.value as AssetCondition)}>
             {ASSET_CONDITIONS.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -142,14 +130,10 @@ export function CreateAssetPage() {
             ))}
           </select>
         </div>
-        <div style={{ marginBottom: "0.75rem" }}>
+
+        <div className="field">
           <label htmlFor="assignedTo">Assigned User (optional)</label>
-          <select
-            id="assignedTo"
-            value={assignedToUserId}
-            onChange={(event) => setAssignedToUserId(event.target.value)}
-            style={{ display: "block", width: "100%" }}
-          >
+          <select id="assignedTo" value={assignedToUserId} onChange={(event) => setAssignedToUserId(event.target.value)}>
             <option value="">Unassigned</option>
             {users.map((u) => (
               <option key={u.id} value={u.id}>
@@ -158,9 +142,12 @@ export function CreateAssetPage() {
             ))}
           </select>
         </div>
-        <button type="submit" disabled={isSubmitting || !currentLocationId}>
-          {isSubmitting ? "Creating..." : "Create Asset"}
-        </button>
+
+        <div className="form-actions">
+          <button type="submit" className="btn btn-primary" disabled={isSubmitting || !currentLocationId}>
+            {isSubmitting ? "Creating..." : "Create Asset"}
+          </button>
+        </div>
       </form>
     </div>
   );

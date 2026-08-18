@@ -41,35 +41,22 @@ export function UserForm({ roles, initialValues, onSubmit, onCancel }: UserFormP
   }
 
   return (
-    <form
-      onSubmit={(event) => void handleSubmit(event)}
-      style={{ border: "1px solid #ddd", padding: "1rem", margin: "1rem 0", maxWidth: 400 }}
-    >
+    <form onSubmit={(event) => void handleSubmit(event)} className="form-card">
       <h3>{isEditing ? "Edit User" : "Create User"}</h3>
       {error && <ErrorBanner message={error} />}
-      <div style={{ marginBottom: "0.75rem" }}>
+
+      <div className="field">
         <label htmlFor="fullName">Full Name</label>
-        <input
-          id="fullName"
-          value={fullName}
-          onChange={(event) => setFullName(event.target.value)}
-          required
-          style={{ display: "block", width: "100%" }}
-        />
+        <input id="fullName" value={fullName} onChange={(event) => setFullName(event.target.value)} required />
       </div>
-      <div style={{ marginBottom: "0.75rem" }}>
+
+      <div className="field">
         <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          required
-          style={{ display: "block", width: "100%" }}
-        />
+        <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
       </div>
+
       {!isEditing && (
-        <div style={{ marginBottom: "0.75rem" }}>
+        <div className="field">
           <label htmlFor="password">Password</label>
           <input
             id="password"
@@ -78,18 +65,13 @@ export function UserForm({ roles, initialValues, onSubmit, onCancel }: UserFormP
             onChange={(event) => setPassword(event.target.value)}
             required
             minLength={8}
-            style={{ display: "block", width: "100%" }}
           />
         </div>
       )}
-      <div style={{ marginBottom: "0.75rem" }}>
+
+      <div className="field">
         <label htmlFor="role">Role</label>
-        <select
-          id="role"
-          value={role}
-          onChange={(event) => setRole(event.target.value as UserRole)}
-          style={{ display: "block", width: "100%" }}
-        >
+        <select id="role" value={role} onChange={(event) => setRole(event.target.value as UserRole)}>
           {roles.map((r) => (
             <option key={r} value={r}>
               {r}
@@ -97,12 +79,15 @@ export function UserForm({ roles, initialValues, onSubmit, onCancel }: UserFormP
           ))}
         </select>
       </div>
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Saving..." : "Save"}
-      </button>{" "}
-      <button type="button" onClick={onCancel}>
-        Cancel
-      </button>
+
+      <div className="form-actions">
+        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+          {isSubmitting ? "Saving..." : "Save"}
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }

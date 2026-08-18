@@ -54,27 +54,34 @@ export function QrScannerPage() {
 
   return (
     <div>
-      <h1>QR Scanner</h1>
+      <div className="page-header">
+        <div>
+          <h1>QR Scanner</h1>
+          <p className="page-header-desc">Scan an asset's QR code to open its movement update form.</p>
+        </div>
+      </div>
 
       {scanError && <ErrorBanner message={scanError} />}
-      <div style={{ maxWidth: 480 }}>
+
+      <div className="card card-padded" style={{ maxWidth: 480, marginBottom: "20px" }}>
         <Scanner onScan={handleScan} onError={handleScanError} />
       </div>
 
-      <div style={{ marginTop: "2rem", maxWidth: 480 }}>
+      <div className="form-card">
         <h3>Manual Asset Code Fallback</h3>
-        <p style={{ color: "#666" }}>If the camera isn't available, enter the asset code directly.</p>
+        <p className="cell-hint" style={{ marginBottom: "14px" }}>
+          If the camera isn't available, enter the asset code directly.
+        </p>
         {fallbackError && <ErrorBanner message={fallbackError} />}
         <form onSubmit={(event) => void handleFallbackSubmit(event)}>
-          <input
-            placeholder="e.g. ASSET-000001"
-            value={assetCode}
-            onChange={(event) => setAssetCode(event.target.value)}
-            style={{ display: "block", width: "100%", marginBottom: "0.5rem" }}
-          />
-          <button type="submit" disabled={isResolving}>
-            {isResolving ? "Looking up..." : "Continue"}
-          </button>
+          <div className="field">
+            <input placeholder="e.g. ASSET-000001" value={assetCode} onChange={(event) => setAssetCode(event.target.value)} />
+          </div>
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary" disabled={isResolving}>
+              {isResolving ? "Looking up..." : "Continue"}
+            </button>
+          </div>
         </form>
       </div>
     </div>
